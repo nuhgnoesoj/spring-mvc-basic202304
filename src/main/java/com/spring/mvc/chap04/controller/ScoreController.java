@@ -1,9 +1,11 @@
 package com.spring.mvc.chap04.controller;
 
+import com.spring.mvc.chap04.dto.ScoreListResponseDTO;
 import com.spring.mvc.chap04.dto.ScoreRequestDTO;
 import com.spring.mvc.chap04.entity.Score;
 import com.spring.mvc.chap04.repository.ScoreRepository;
 import com.spring.mvc.chap04.repository.ScoreRepositoryImpl;
+import com.spring.mvc.chap04.service.ScoreService;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +17,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /*
     # 요청 URL
@@ -35,7 +39,8 @@ import java.util.List;
 public class ScoreController {
 
     // 저장소에 의존해야 데이터를 받아서 클라이언트에게 응답할 수 있음
-    private final ScoreRepository repository;
+//    private final ScoreRepository repository;
+    private final ScoreService scoreService;
 
     // 만약에 클래스의 생성자가 단 1개라면
     // 자동으로 @Autowired를 써줌
@@ -52,8 +57,16 @@ public class ScoreController {
         System.out.println("/score/list : GET!");
         System.out.println("정렬 요구사항: " + sort);
 
-        List<Score> scoreList = repository.findAll(sort);
-        model.addAttribute("sList", scoreList);
+        List<ScoreListResponseDTO> responseDTOList
+                = scoreService.getList(sort);
+
+//        List<ScoreListResponseDTO> responseDTOList = new ArrayList<>();
+//        for (Score s : scoreList) {
+//            ScoreListResponseDTO dto = new ScoreListResponseDTO(s);
+//            responseDTOList.add(dto);
+//        }
+
+        model.addAttribute("sList", responseDTOList);
 
         return "chap04/score-list";
     }
@@ -64,11 +77,7 @@ public class ScoreController {
         // 입력데이터(쿼리스트링) 읽기
         System.out.println("/score/register : POST! - " + dto);
 
-        // dto(ScoreDTO)를 entity(Score)로 변환해야 함.
-        Score score = new Score(dto);
-
-        // save명령
-        repository.save(score);
+        scoreService.insertScore(dto);
 
         /*
             등록요청에서 JSP 뷰 포워딩을 하면
@@ -85,7 +94,7 @@ public class ScoreController {
     public String remove(int stuNum) {
         System.out.println("/score/remove : GET!");
 
-        repository.deleteByStuNum(stuNum);
+        scoreService.delete(stuNum);
 
         return "redirect:/score/list";
     }
@@ -93,30 +102,35 @@ public class ScoreController {
     @GetMapping("/detail")
     public String detail(int stuNum, Model model) {
         System.out.println("/score/detail : GET!");
-
-        Score score = repository.findByStuNum(stuNum);
-        model.addAttribute("s", score);
+        retrieve(stuNum, model);
         return "chap04/score-detail";
     }
-    // 5. 상세정보 수정 하기 (띄우는 요청 & 적용한 요청) 성적정보를 가져와서 setter로 수정
+
+
+    // 5. 수정 화면 열어주기
     @GetMapping("/modify")
     public String modify(int stuNum, Model model) {
-        System.out.println("/score/modify : POST!");
-
-        Score score = repository.findByStuNum(stuNum);
-        model.addAttribute("s", score);
+        System.out.println("/score/modify : GET!");
+        retrieve(stuNum, model);
         return "chap04/score-modify";
     }
 
-    @PostMapping("/modify")
-    public String modify(int stuNum, int kor, int eng, int math, Model model) {
-        Score score = repository.findByStuNum(stuNum);
-        score.setKor(kor);
-        score.setEng(eng);
-        score.setMath(math);
-
+    private void retrieve(int stuNum, Model model) {
+        Score score = scoreService.retrieve(stuNum);
         model.addAttribute("s", score);
-        return "redirect:/score/detail?stuNum=" + stuNum; //리다이렉트 정확한 위치 명시
     }
+
+    // 6. 수정 완료 처리하기
+    @PostMapping("/modify")
+    public String modify(int stuNum, ScoreRequestDTO dto) {
+        System.out.println("/score/modify : POST!");
+
+        Score score = scoreService.retrieve(stuNum);
+        score.changeScore(dto);
+
+        return "redirect:/score/detail?stuNum=" + stuNum; // 상세보기페이지로 리다이렉트
+    }
+
+
 
 }
