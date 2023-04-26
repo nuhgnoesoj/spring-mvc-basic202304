@@ -14,8 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class StudentRepositoryTest {
 
     @Autowired
-    StudentRepository repository;
-
+   ScoreRepository repository;
 
     @Test
     @DisplayName("학생의 이름,점수,평균,총점,등급를 DB student table에 잘 삽입해야 한다.")
