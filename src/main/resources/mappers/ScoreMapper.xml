@@ -41,4 +41,9 @@
         WHERE stu_num=#{stuNum}
     </select>
 
+    <update id="updateScore">
+        UPDATE tbl_score
+        SET kor = #{kor}, eng = #{eng}, math = #{math}, total = #{total}, average = #{average}, grade = #{grade}
+        WHERE stu_num = #{stuNum}
+    </update>
 </mapper>

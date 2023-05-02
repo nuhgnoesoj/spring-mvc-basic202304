@@ -61,7 +61,7 @@
 
     <div class="wrap">
         <section class="score-main">
-            <h1>${s.name}님 성적 정보 수정하기~</h1>
+            <h1>${s.stuName}님 성적 정보 수정하기~</h1>
             <form action="/score/modify" method="post">
                 <input type="hidden" name="stuNum" value="${s.stuNum}">
                 <ul>

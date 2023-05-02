@@ -67,4 +67,9 @@ public class ScoreService {
         return scoreRepository.findByStuNum(stuNum);
     }
 
+    // 성적 수정
+    public void update(Score score) {
+        scoreRepository.updateScore(score);
+    }
+
 }
