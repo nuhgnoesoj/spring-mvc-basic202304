@@ -23,10 +23,9 @@ public class ReplyPostRequestDTO {
     private String author; // 댓글 작성자명
 
     /*
-        @NotNull    -   null을 허용하지 않음
-        @NotBlank   -   null + ""을 허용하지 않음
-    */
-
+        @NotNull  -  null을 허용하지 않음
+        @NotBlank -  null + ""을 허용하지 않음
+     */
     @NotNull
     private Long bno; // 원본 글 번호
 
