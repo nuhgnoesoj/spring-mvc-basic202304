@@ -3,9 +3,11 @@ package com.spring.mvc.chap05.repository;
 import com.spring.mvc.chap05.entity.Board;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.*;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
@@ -19,9 +21,9 @@ public class BoardRepositoryImpl
 
     static {
         boardMap = new HashMap<>();
-        Board b1 = new Board(++sequence, "원피스", "루피");
-        Board b2 = new Board(++sequence, "나루토", "나루토");
-        Board b3 = new Board(++sequence, "블리치", "이치고");
+        Board b1 = new Board(++sequence, "돈까스 레시피", "그냥 이마트에서 사서 에어프라이 돌려라~");
+        Board b2 = new Board(++sequence, "관종의 조건", "이 세상은 나를 중심으로 돌아간다라는 마음으로 행동해라ㅋㅋ");
+        Board b3 = new Board(++sequence, "이마트 영업시간", "10시에 마감하는걸로 바뀌었나요?? 마감털이 몇시에 가야되죠?? 하.....");
         boardMap.put(b1.getBoardNo(), b1);
         boardMap.put(b2.getBoardNo(), b2);
         boardMap.put(b3.getBoardNo(), b3);
@@ -44,6 +46,14 @@ public class BoardRepositoryImpl
     @Override
     public boolean save(Board board) {
         board.setBoardNo(++sequence);
+
+        LocalDateTime regDateTime = board.getRegDateTime();
+        Date ddd = Date.from(regDateTime.atZone(ZoneId.systemDefault()).toInstant());
+        System.out.println("ddd = " + ddd);
+
+        LocalDateTime eee = new Timestamp(ddd.getTime()).toLocalDateTime();
+        System.out.println("eee = " + eee);
+
         boardMap.put(board.getBoardNo(), board);
         return true;
     }
@@ -53,4 +63,8 @@ public class BoardRepositoryImpl
         boardMap.remove(boardNo);
         return true;
     }
+
+
+
+
 }
