@@ -35,7 +35,7 @@ class MemberServiceTest {
         //given
         LoginRequestDTO dto = new LoginRequestDTO();
         dto.setAccount("abc1234");
-        dto.setPassword("1111!");
+        dto.setPassword("aaa1234!");
 
         //when
         LoginResult result = memberService.authenticate(dto);
